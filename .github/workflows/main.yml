@@ -24,15 +24,23 @@ jobs:
       - name: Install Dependencies
         run: |
           python -m pip install --upgrade pip
-          pip install pytest pytest-playwright playwright
+          pip install pytest pytest-playwright playwright pytest-html
 
       - name: Install Playwright Browsers
         run: playwright install --with-deps chromium
 
       - name: Run ParaBank Tests
         run: |
-          pytest Tests/ -v --tb=short 2>&1 | tee test-results.txt
+          pytest Tests/ -v --tb=short --html=report.html 2>&1 | tee test-results.txt
         continue-on-error: true
+
+      - name: Upload HTML Report
+        if: always()
+        uses: actions/upload-artifact@v4.6.2
+        with:
+          name: html-report
+          path: report.html
+          if-no-files-found: ignore
 
       - name: Upload Test Results
         if: always()
