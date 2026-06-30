@@ -1,0 +1,5 @@
+firstName,lastName,address.street,address.city,address.state,address.zipCode,phoneNumber,ssn,username,password,repeatedPassword
+Sunita,Chauhan,Aksh Nagar,Ghaziabad,UP,201001,9876543210,123456789,suni,Pas12,Pas12
+Amit,Kumar,,Delhi,Delhi,"",9876501234,987654321,amit,Ps@123,Ps@123
+Rohit,Sharma,MG Road,Pune,Maharashtra,ghbfdfg,fgjmbghhb,111223333,rohi,Ps124,Ps124
+

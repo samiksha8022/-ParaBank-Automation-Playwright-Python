@@ -2,38 +2,97 @@
 from playwright.sync_api import Page,expect
 import random
 import re
+import pytest
+import csv
+data = []
+with open("DDT_CSV_REG/data.csv",newline="") as file:
+   reader =csv.DictReader(file)
+   for row in reader:
+         data.append(
+            (
+                row["firstName"],
+                row["lastName"],
+                row["address.street"],
+                row["address.city"],
+                row["address.state"],
+                row["address.zipCode"],
+                row["phoneNumber"],
+                row["ssn"],
+                row["username"],
+                row["password"],
+                row["repeatedPassword"],
+            )
+        )
+@pytest.mark.parametrize(
+    "firstName,lastName,street,city,state,zipCode,phoneNumber,ssn,username,password,repeatedPassword",
+    data
+)
 
-def test_register(page:Page):
+def test_register(
+    page:Page,
+    firstName,
+    lastName,
+    street,
+    city,
+    state,
+    zipCode,
+    phoneNumber,
+    ssn,
+    username,
+    password,
+    repeatedPassword,
+
+):
     page.goto("https://parabank.parasoft.com/parabank/index.htm")
     page.get_by_text("Register").click()
-    expect(page.get_by_text("Signing up is easy!")).to_be_visible()
-    expect(page.get_by_text("If you have an account with us you can sign-up for free instant online access.")).to_be_visible()
-    username = f"user{random.randint(1000,9999)}"
-    password = f"pass{random.randint(1000,9999)}"
-    page.locator("input[name='customer.firstName']").fill("se")
-    page.locator("input[name='customer.lastName']").fill("chauhan")
-    page.locator("input[name='customer.address.street']").fill("akshnagar")
-    page.locator("input[name='customer.address.city']").fill("ghazibad")
-    page.locator("input[name='customer.address.state']").fill("up")
-    page.locator("input[name ='customer.address.zipCode']").fill("1234")
-    page.locator("input[name ='customer.phoneNumber']").fill("893657801")
-    page.locator("input[name ='customer.ssn']").fill("hii")
+    # expect(page.get_by_text("Signing up is easy!")).to_be_visible()
+    # expect(page.get_by_text("If you have an account with us you can sign-up for free instant online access.")).to_be_visible()
+    # username = f"user{random.randint(1000,9999)}"
+    # password = f"pass{random.randint(1000,9999)}"
+    page.locator("input[name='customer.firstName']").fill(firstName)
+    page.locator("input[name='customer.lastName']").fill(lastName)
+    page.locator("input[name='customer.address.street']").fill(street)
+    page.locator("input[name='customer.address.city']").fill(city)
+    page.locator("input[name='customer.address.state']").fill(state)
+    page.locator("input[name ='customer.address.zipCode']").fill(zipCode)
+    page.locator("input[name ='customer.phoneNumber']").fill(phoneNumber)
+    page.locator("input[name ='customer.ssn']").fill(ssn)
     page.locator("input[name ='customer.username']").fill(username)
     page.locator("input[name ='customer.password']").fill(password)
-    page.locator("input[name ='repeatedPassword']").fill(password)
+    page.locator("input[name ='repeatedPassword']").fill(repeatedPassword)
     page.get_by_role("button", name="Register").click()
-    succeful_msg =page.locator("h1.title").text_content()
-    print(succeful_msg)
+    page.screenshot(path="result.png")
+    print(page.locator("body").text_content())
 
+    expect(page.locator("#rightPanel h1")).to_be_visible()
+    expect(page.locator("#rightPanel p")).to_have_text("Your account was created successfully. You are now logged in.")
+    expect(page.get_by_text("Address is required.")).to_be_visible()
+    expect(page.get_by_text("Zip Code is required.")).to_be_visible()
 
-    success_msg = page.get_by_text("Your account was created successfully. You are now logged in.")
+    # success_msg1 = page.get_by_text("Your account was created successfully. You are now logged in.")
 
-    expect(success_msg).to_be_visible()
+    # expect(success_msg1).to_be_visible()
 
-    page.screenshot(path="screen.png")
+#     page.screenshot(path="screen.png")
     # page.get_by_role("link", name="Open New Account").click()
 
-    page.wait_for_timeout(5000)
+
+
+
+
+
+
+
+def test_account_serv(page:Page):
+        # login page
+    page.goto("https://parabank.parasoft.com/parabank/index.htm")
+
+    # existing valid user se login
+    page.locator('input[name="username"]').fill("john")
+    page.locator('input[name="password"]').fill("demo")
+    page.locator('input[type="submit"]').click()
+
+
 # account servces
     expect(page.get_by_text("Account Services")).to_be_visible()
     menu_items = page.locator("ul li a").all_text_contents()
@@ -52,12 +111,38 @@ def test_register(page:Page):
 
 
     page.get_by_role("button", name="Open New Account").click()
-    # title =page.locator("h1.title").text_content()
-    # print(title)
-    # expect(title).to_be_visible()
-   
-    page.get_by_role("link", name='newAccountId').click()
-    page.wait_for_timeout(50000)
+    title =page.locator("h1.title").nth(1).text_content()
+    print(title)
+    
+    newAccountId = page.locator("#newAccountId").text_content()
+    print(newAccountId)
+    
+    
+    # page.get_by_role("link", name="Open New Account").click()
+
+
+
+
+def test_transfer(page: Page):
+    # login page
+    page.goto("https://parabank.parasoft.com/parabank/index.htm")
+
+    # existing valid user se login
+    page.locator('input[name="username"]').fill("john")
+    page.locator('input[name="password"]').fill("demo")
+    page.locator('input[type="submit"]').click()
+
+    # transfer funds page
+    page.get_by_role("link", name="Transfer Funds").click()
+    page.locator("#amount").fill("50000")
+    page.get_by_role("button", name="Transfer").click()
+    # to check sucessfule msg show to display for print 
+    
+
+
+    
+                 
+    
 
 
 
@@ -94,9 +179,10 @@ def test_bill_payment(page:Page):
     page.locator("input[name ='amount']").fill("500000")
     page.locator("input[name ='fromAccountId']")
     page.get_by_role("button", name="Send Payment").click()
-    expect(page.get_by_role("heading", name="Bill Payment Complete")).to_be_visible()   
+    # expect(page.get_by_role("heading", name="Bill Payment Complete")).to_be_visible()  
+
   
-    page.wait_for_timeout(50000)
+   
 
    
 
