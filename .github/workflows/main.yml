@@ -11,6 +11,8 @@ jobs:
   test:
     name: Run ParaBank Tests
     runs-on: ubuntu-latest
+    env:
+     TOKEN: ${{ secrets.TOKEN }}
 
     steps:
       - name: Checkout Repository
