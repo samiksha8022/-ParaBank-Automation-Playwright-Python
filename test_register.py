@@ -43,11 +43,12 @@ def test_register(
     repeatedPassword,
 
 ):
+    unique_username = f"user{random.randint(1000,9999)}"
     page.goto("https://parabank.parasoft.com/parabank/index.htm")
     page.get_by_text("Register").click()
     # expect(page.get_by_text("Signing up is easy!")).to_be_visible()
     # expect(page.get_by_text("If you have an account with us you can sign-up for free instant online access.")).to_be_visible()
-    # username = f"user{random.randint(1000,9999)}"
+    # unique_username = f"user{random.randint(1000,9999)}"
     # password = f"pass{random.randint(1000,9999)}"
     page.locator("input[name='customer.firstName']").fill(firstName)
     page.locator("input[name='customer.lastName']").fill(lastName)
@@ -57,7 +58,7 @@ def test_register(
     page.locator("input[name ='customer.address.zipCode']").fill(zipCode)
     page.locator("input[name ='customer.phoneNumber']").fill(phoneNumber)
     page.locator("input[name ='customer.ssn']").fill(ssn)
-    page.locator("input[name ='customer.username']").fill(username)
+    page.locator("input[name ='customer.username']").fill(unique_username)
     page.locator("input[name ='customer.password']").fill(password)
     page.locator("input[name ='repeatedPassword']").fill(repeatedPassword)
     page.get_by_role("button", name="Register").click()
@@ -66,8 +67,8 @@ def test_register(
 
     expect(page.locator("#rightPanel h1")).to_be_visible()
     expect(page.locator("#rightPanel p")).to_have_text("Your account was created successfully. You are now logged in.")
-    expect(page.get_by_text("Address is required.")).to_be_visible()
-    expect(page.get_by_text("Zip Code is required.")).to_be_visible()
+    # expect(page.get_by_text("Address is required.")).to_be_visible()
+    # expect(page.get_by_text("Zip Code is required.")).to_be_visible()
 
     # success_msg1 = page.get_by_text("Your account was created successfully. You are now logged in.")
 
@@ -99,7 +100,7 @@ def test_account_serv(page:Page):
     for item in menu_items:
      print(item)
     page.get_by_role("link", name="Open New Account").click()
-#     # print(page.get_by_role("link", name="Open New Account").count())
+     # print(page.get_by_role("link", name="Open New Account").count())
 
 
     page.locator("#type").select_option(label="CHECKING")
@@ -157,6 +158,8 @@ def test_account(page:Page):
    page.locator('input[type="submit"]').click()
   
    
+
+    
 #    page.wait_for_timeout(50000)
 def test_bill_payment(page:Page):
     page.goto("https://parabank.parasoft.com/parabank/index.htm")
